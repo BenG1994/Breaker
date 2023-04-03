@@ -20,8 +20,13 @@ struct ContentView: View {
     @State private var textFieldNumber = 0.0
     let notify = NotificationHandler()
     
+    @State private var timeAlert = false
+    @State private var successAlert = false
+    @State private var cancelAlert = false
     
+    @State private var isActive = false
     
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     
     var body: some View {
@@ -29,7 +34,9 @@ struct ContentView: View {
         let hoursInSeconds = getTimeDifference().0 * 3600
         let minutesInSeconds = getTimeDifference().1 * 300
         
-        let timeInSeconds = hoursInSeconds + minutesInSeconds
+        var timeInSeconds = hoursInSeconds + minutesInSeconds
+        
+
         
         
         VStack {
@@ -56,25 +63,49 @@ struct ContentView: View {
                         timeInterval: Double(timeInSeconds),
                         title: "Take a break!",
                         body: "This is your reminder to do something else.")
+                    if timeInSeconds < 3599 {
+                        timeAlert = true
+                    }
+                    if timeInSeconds > 3599 {
+                        successAlert = true
+                    }
+                    self.isActive.toggle()
+                    print(getTimeDifference().1 * 5)
                     print(hoursInSeconds)
                     print(minutesInSeconds)
                     print(timeInSeconds)
                 }
+                
+                
+                .alert("Too short!", isPresented: $timeAlert, actions: {
+                    
+                }, message: {
+                    Text("Your reminders must be at least 60 minutes apart.")
+                })
+                .alert("Reminder set!", isPresented: $successAlert, actions: {
+                    
+                }, message: {
+                    Text("You will be reminder to take a break every \(getTimeDifference().0) hrs, \(getTimeDifference().1 * 5) min. Don't forget to stop reminders when you're done needing them.")
+                })
                 .font(.system(size: 25))
                 .padding (.trailing, 15)
                 Button("Stop reminders"){
                     notify.cancelNotifications()
+                    cancelAlert = true
                 }
+                .alert("Reminders stopped!", isPresented: $cancelAlert, actions: {
+                    
+                }, message: {
+                    Text("You will no longer receieve reminders until you start new ones.")
+                })
                 .foregroundColor(.red)
                 .font(.system(size: 25))
                 .padding (.leading, 15)
             }
             .padding (50)
+            .padding(.top, 30)
             Spacer()
-            Button("Request authorization"){
-                notify.requestAuthorization()
-            }
-            .foregroundColor(.black.opacity(0.6))
+            Text("Time until next reminder: \(timeInSeconds)")
         }
         .padding()
         .frame(maxHeight: .infinity, alignment: .top)
@@ -95,19 +126,19 @@ struct ContentView: View {
                     ForEach(1...60, id: \.self){index in
                         Rectangle()
                             .fill(index % 5 == 0 ? .black : .gray)
-                            .frame(width: 2, height: index % 5 == 0 ? 10 : 5)
+                            .frame(width: 2, height: index % 5 == 0 ? 10 : 3)
                             .offset(y: (width - 60) / 2)
                             .rotationEffect(.init(degrees: Double(index) * 6))
                     }
                     
-                    let texts = [6, 9, 1, 3]
+                    let texts = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
                     ForEach(texts.indices, id: \.self){index in
                         Text("\(texts[index])")
                             .font(.system(size: 15).bold())
                             .foregroundColor(.black)
-                            .rotationEffect(.init(degrees: Double(index) * -90))
-                            .offset(y: (width - 90) / 2)
-                            .rotationEffect(.init(degrees: Double(index) * 90))
+                            .rotationEffect(.init(degrees: Double(index) * -30))
+                            .offset(y: (width - 100) / 2)
+                            .rotationEffect(.init(degrees: Double(index) * 30))
                     }
                 }
                 Circle()
@@ -199,6 +230,7 @@ struct ContentView: View {
         
         return (result.hour ?? 0, result.minute ?? 0)
     }
+
     
 }
 
