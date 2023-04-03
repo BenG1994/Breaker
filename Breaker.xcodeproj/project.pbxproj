@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2EBCEF4E29D9F0FB00357E2B /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBCEF4D29D9F0FB00357E2B /* NotificationManager.swift */; };
 		2EC6994129D8BA13000635DC /* BreakerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6994029D8BA13000635DC /* BreakerApp.swift */; };
 		2EC6994329D8BA13000635DC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC6994229D8BA13000635DC /* ContentView.swift */; };
 		2EC6994529D8BA15000635DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2EC6994429D8BA15000635DC /* Assets.xcassets */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2EBCEF4D29D9F0FB00357E2B /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		2EC6993D29D8BA13000635DC /* Breaker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breaker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EC6994029D8BA13000635DC /* BreakerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakerApp.swift; sourceTree = "<group>"; };
 		2EC6994229D8BA13000635DC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -52,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				2EC6994029D8BA13000635DC /* BreakerApp.swift */,
+				2EBCEF4D29D9F0FB00357E2B /* NotificationManager.swift */,
 				2EC6994229D8BA13000635DC /* ContentView.swift */,
 				2EC6994429D8BA15000635DC /* Assets.xcassets */,
 				2EC6994629D8BA15000635DC /* Preview Content */,
@@ -137,6 +140,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2EBCEF4E29D9F0FB00357E2B /* NotificationManager.swift in Sources */,
 				2EC6994329D8BA13000635DC /* ContentView.swift in Sources */,
 				2EC6994129D8BA13000635DC /* BreakerApp.swift in Sources */,
 			);
