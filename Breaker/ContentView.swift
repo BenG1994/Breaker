@@ -24,39 +24,56 @@ struct ContentView: View {
     @State private var successAlert = false
     @State private var cancelAlert = false
     
-    @State private var isActive = false
+//    @State var timeCount = timeLeft
     
-    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var startedReminders = false
+    
+    
     
     
     var body: some View {
         
+        
+        
         let hoursInSeconds = getTimeDifference().0 * 3600
         let minutesInSeconds = getTimeDifference().1 * 300
         
-        var timeInSeconds = hoursInSeconds + minutesInSeconds
+        @State var timeInSeconds = hoursInSeconds + minutesInSeconds
         
-
+        @State var timeLeft = hoursInSeconds + minutesInSeconds
+     
+        @State var pause = false
+        
+        let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        
+        
+        var nextReminder = Date().addingTimeInterval(TimeInterval(timeInSeconds))
+        
+        var nextReminderTimer = Timer.publish(every: TimeInterval(timeInSeconds), on: .main, in: .common)
         
         
         VStack {
             HStack{
-                VStack(alignment: .leading, spacing: 8){
-                    Text("Today")
+                VStack(spacing: 8){
+                    Text("\(Date(), style: .date)"
+                    )
                         .font(.title.bold())
-                    Text("Good morning, asshats.")
-                        .foregroundColor(.gray)
-                    
                 }
-                .frame(maxWidth:.infinity, alignment: .leading)
+                .frame(maxWidth:.infinity, alignment: .center)
             }
             Text ("How long between reminders?")
                 .foregroundColor(.black)
-                .padding(.top, 30)
+//                .scaledToFit()
+                .font(.system(size: 40))
+                .minimumScaleFactor(0.5)
+                .bold()
+                .padding(.top, 20)
+                .multilineTextAlignment(.center)
+                Spacer()
             CircularSlider()
                 .padding(.top, 50)
             HStack{
-                Button("Start reminders"){
+                Button("Start new reminders"){
                     notify.sendNotification(
                         date: Date(),
                         type: "time",
@@ -68,14 +85,14 @@ struct ContentView: View {
                     }
                     if timeInSeconds > 3599 {
                         successAlert = true
+                        startedReminders = true
                     }
-                    self.isActive.toggle()
-                    print(getTimeDifference().1 * 5)
-                    print(hoursInSeconds)
-                    print(minutesInSeconds)
-                    print(timeInSeconds)
+                    
+                    print("\(timeInSeconds) time")
+                    print(startedReminders)
                 }
-                
+            
+    
                 
                 .alert("Too short!", isPresented: $timeAlert, actions: {
                     
@@ -87,11 +104,12 @@ struct ContentView: View {
                 }, message: {
                     Text("You will be reminder to take a break every \(getTimeDifference().0) hrs, \(getTimeDifference().1 * 5) min. Don't forget to stop reminders when you're done needing them.")
                 })
-                .font(.system(size: 25))
-                .padding (.trailing, 15)
-                Button("Stop reminders"){
+//                .font(.system(size: 25))
+                .padding (.trailing, 35)
+                Button("Stop all reminders"){
                     notify.cancelNotifications()
                     cancelAlert = true
+                    timer.upstream.connect().cancel()
                 }
                 .alert("Reminders stopped!", isPresented: $cancelAlert, actions: {
                     
@@ -99,14 +117,29 @@ struct ContentView: View {
                     Text("You will no longer receieve reminders until you start new ones.")
                 })
                 .foregroundColor(.red)
-                .font(.system(size: 25))
-                .padding (.leading, 15)
+                
+                .padding (.leading, 35)
             }
-            .padding (50)
-            .padding(.top, 30)
+            .font(.system(size: 25))
+            .minimumScaleFactor(0.4)
+            .padding(.top, 45)
+            .padding(.bottom, 15)
             Spacer()
-            Text("Time until next reminder: \(timeInSeconds)")
+
+            VStack{
+                Text("Next reminder at:")
+                    .font(.system(size: 28))
+                    .minimumScaleFactor(0.4)
+                    .bold()
+                    .padding(.bottom, 3)
+                Text("\(nextReminder, style: .time)")
+                    .font(.system(size: 20))
+                Text("\(nextReminder, style: .date)")
+            }
         }
+        
+        
+        
         .padding()
         .frame(maxHeight: .infinity, alignment: .top)
     }
@@ -147,18 +180,18 @@ struct ContentView: View {
                 Circle()
                     .trim(from: startProgress, to: toProgress)
                     .stroke(Color(.cyan), style: StrokeStyle(
-                    lineWidth: 40,
-                    lineCap: .round,
-                    lineJoin: .round))
+                        lineWidth: 40,
+                        lineCap: .round,
+                        lineJoin: .round))
                     .rotationEffect(.init(degrees: -90))
-            
+                
                 Circle()
                     .stroke(.gray.opacity(0.06), lineWidth: 5)
                     .font(.callout)
                     .frame(width: 35, height: 35)
                     .background(.white, in: Circle())
                     .offset(x: width / 2)
-            
+                
                     .rotationEffect(.init(degrees: toAngle))
                 
                     .gesture(
@@ -168,12 +201,12 @@ struct ContentView: View {
                             })
                     )
                     .rotationEffect(.init(degrees: -90))
-                    
-                   //MARK: - Time Text
+                
+                //MARK: - Time Text
                 VStack(spacing: 8){
                     Text("\(getTimeDifference().0) hrs")
                         .font(.title.bold())
-                
+                    
                     Text("\(getTimeDifference().1 * 5) min")
                         .foregroundColor(.gray)
                 }
@@ -230,6 +263,7 @@ struct ContentView: View {
         
         return (result.hour ?? 0, result.minute ?? 0)
     }
+    
 
     
 }
