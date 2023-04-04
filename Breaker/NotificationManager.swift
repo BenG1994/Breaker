@@ -9,19 +9,6 @@ import UIKit
 
 class NotificationHandler {
     
-    
-//    func requestAuthorization() {
-//        let options: UNAuthorizationOptions = [.alert, .sound]
-//        UNUserNotificationCenter.current().requestAuthorization(options: options) { success, error in
-//            if let error = error {
-//                print("error \(error.localizedDescription)")
-//            }else {
-//                print ("success")
-//            }
-//        }
-//    }
-    
-    
     func sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String) {
         var trigger: UNNotificationTrigger?
         

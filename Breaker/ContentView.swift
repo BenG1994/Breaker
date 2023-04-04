@@ -24,33 +24,13 @@ struct ContentView: View {
     @State private var successAlert = false
     @State private var cancelAlert = false
     
-//    @State var timeCount = timeLeft
-    
-    @State private var startedReminders = false
-    
-    
-    
-    
     var body: some View {
         
-        
-        
+    
         let hoursInSeconds = getTimeDifference().0 * 3600
         let minutesInSeconds = getTimeDifference().1 * 300
         
         @State var timeInSeconds = hoursInSeconds + minutesInSeconds
-        
-        @State var timeLeft = hoursInSeconds + minutesInSeconds
-     
-        @State var pause = false
-        
-        let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-        
-        
-        var nextReminder = Date().addingTimeInterval(TimeInterval(timeInSeconds))
-        
-        var nextReminderTimer = Timer.publish(every: TimeInterval(timeInSeconds), on: .main, in: .common)
-        
         
         VStack {
             HStack{
@@ -63,7 +43,6 @@ struct ContentView: View {
             }
             Text ("How long between reminders?")
                 .foregroundColor(.black)
-//                .scaledToFit()
                 .font(.system(size: 40))
                 .minimumScaleFactor(0.5)
                 .bold()
@@ -72,6 +51,7 @@ struct ContentView: View {
                 Spacer()
             CircularSlider()
                 .padding(.top, 50)
+            Spacer()
             HStack{
                 Button("Start new reminders"){
                     notify.sendNotification(
@@ -85,17 +65,10 @@ struct ContentView: View {
                     }
                     if timeInSeconds > 3599 {
                         successAlert = true
-                        startedReminders = true
                     }
-                    
                     print("\(timeInSeconds) time")
-                    print(startedReminders)
                 }
-            
-    
-                
                 .alert("Too short!", isPresented: $timeAlert, actions: {
-                    
                 }, message: {
                     Text("Your reminders must be at least 60 minutes apart.")
                 })
@@ -109,15 +82,13 @@ struct ContentView: View {
                 Button("Stop all reminders"){
                     notify.cancelNotifications()
                     cancelAlert = true
-                    timer.upstream.connect().cancel()
+//                    timer.upstream.connect().cancel()
                 }
                 .alert("Reminders stopped!", isPresented: $cancelAlert, actions: {
-                    
                 }, message: {
                     Text("You will no longer receieve reminders until you start new ones.")
                 })
                 .foregroundColor(.red)
-                
                 .padding (.leading, 35)
             }
             .font(.system(size: 25))
@@ -126,20 +97,17 @@ struct ContentView: View {
             .padding(.bottom, 15)
             Spacer()
 
-            VStack{
-                Text("Next reminder at:")
-                    .font(.system(size: 28))
-                    .minimumScaleFactor(0.4)
-                    .bold()
-                    .padding(.bottom, 3)
-                Text("\(nextReminder, style: .time)")
-                    .font(.system(size: 20))
-                Text("\(nextReminder, style: .date)")
-            }
+//            VStack{
+//                Text("Next reminder at:")
+//                    .font(.system(size: 28))
+//                    .minimumScaleFactor(0.4)
+//                    .bold()
+//                    .padding(.bottom, 3)
+//                Text("\(nextReminder, style: .time)")
+//                    .font(.system(size: 20))
+//                Text("\(nextReminder, style: .date)")
+//            }
         }
-        
-        
-        
         .padding()
         .frame(maxHeight: .infinity, alignment: .top)
     }
@@ -151,7 +119,6 @@ struct ContentView: View {
         GeometryReader{proxy in
             
             let width = proxy.size.width
-            
             
             ZStack{
                 //MARK: - clock design
@@ -234,7 +201,6 @@ struct ContentView: View {
             self.toAngle = angle
             self.toProgress = progress
         }
-        
     }
     
     func getTime(angle: Double) -> Date {
@@ -242,7 +208,7 @@ struct ContentView: View {
         let progress = angle / 30
         
         let hour = Int(progress)
-        let remainder = (progress.truncatingRemainder(dividingBy: 1) * 12).rounded()
+        let remainder = (progress.truncatingRemainder(dividingBy: 1) * 11).rounded()
         
         var minute = remainder * 5
         minute = (minute > 55 ? 55 : minute)
@@ -263,9 +229,6 @@ struct ContentView: View {
         
         return (result.hour ?? 0, result.minute ?? 0)
     }
-    
-
-    
 }
 
 struct ContentView_Previews: PreviewProvider {
