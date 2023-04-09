@@ -10,6 +10,9 @@ import UIKit
 class NotificationHandler {
     
     func sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String) {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        
         var trigger: UNNotificationTrigger?
         
         

@@ -9,6 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     
+    var userDefaults = UserDefaults.standard
+    
+    
+    
+    
     //MARK: - properties
     @State var startAngle: Double = 0
     @State var toAngle: Double = 180
@@ -26,6 +31,8 @@ struct ContentView: View {
     
     var body: some View {
         
+        let printHours = userDefaults.string(forKey: "HourTime") ?? "0"
+        let printMin = userDefaults.string(forKey: "MinTime") ?? "0"
     
         let hoursInSeconds = getTimeDifference().0 * 3600
         let minutesInSeconds = getTimeDifference().1 * 300
@@ -67,6 +74,11 @@ struct ContentView: View {
                         successAlert = true
                     }
                     print("\(timeInSeconds) time")
+                    userDefaults.set(getTimeDifference().0, forKey: "HourTime")
+                    userDefaults.set(getTimeDifference().1*5, forKey: "MinTime")
+                    print(userDefaults.string(forKey: "HourTime") ?? "0 hrs")
+                    print(userDefaults.string(forKey: "MinTime") ?? "0 mins")
+                    
                 }
                 .alert("Too short!", isPresented: $timeAlert, actions: {
                 }, message: {
@@ -82,6 +94,10 @@ struct ContentView: View {
                 Button("Stop all reminders"){
                     notify.cancelNotifications()
                     cancelAlert = true
+                    userDefaults.set("0", forKey: "HourTime")
+                    userDefaults.set("0", forKey: "MinTime")
+                    print(userDefaults.string(forKey: "HourTime") ?? "0 hrs")
+                    print(userDefaults.string(forKey: "MinTime") ?? "0 mins")
 //                    timer.upstream.connect().cancel()
                 }
                 .alert("Reminders stopped!", isPresented: $cancelAlert, actions: {
@@ -97,16 +113,16 @@ struct ContentView: View {
             .padding(.bottom, 15)
             Spacer()
 
-//            VStack{
-//                Text("Next reminder at:")
-//                    .font(.system(size: 28))
-//                    .minimumScaleFactor(0.4)
-//                    .bold()
-//                    .padding(.bottom, 3)
-//                Text("\(nextReminder, style: .time)")
-//                    .font(.system(size: 20))
-//                Text("\(nextReminder, style: .date)")
-//            }
+            VStack{
+                Text("Previous reminders every:")
+                    .font(.system(size: 22))
+                    .minimumScaleFactor(0.4)
+                    .bold()
+                    .padding(.bottom, 3)
+                Text("\(printHours) hrs, \(printMin) mins")
+                    .font(.system(size: 20))
+//                Text("\(printMin as! Date, style: .time)")
+            }
         }
         .padding()
         .frame(maxHeight: .infinity, alignment: .top)
