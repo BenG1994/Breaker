@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Breaker is an app that sends you notifications at a specified duration on repeat until you cancel. Soon to be on the App Store. Breaker was created as a way for me to test how to use push notifications and a break timer felt like a very fitting app to make to implement that feature.
+Breaker is an app that sends you notifications at a specified duration on repeat until you cancel. Breaker was created as a way for me to test how to use push notifications and a break timer felt like a very fitting app to make to implement that feature. Download now on the [App Store](https://apps.apple.com/us/app/breaker-break-timer/id6447263370).
 
 ## Skills used
 
