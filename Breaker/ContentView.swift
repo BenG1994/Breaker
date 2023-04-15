@@ -28,6 +28,9 @@ struct ContentView: View {
     @State private var timeAlert = false
     @State private var successAlert = false
     @State private var cancelAlert = false
+    @State private var reminderTextAlert = false
+    @State private var reminderText = ""
+    
     
     var body: some View {
         
@@ -36,6 +39,8 @@ struct ContentView: View {
     
         let hoursInSeconds = getTimeDifference().0 * 3600
         let minutesInSeconds = getTimeDifference().1 * 300
+
+        var savedReminderText = userDefaults.string(forKey: "ReminderText")
         
         @State var timeInSeconds = hoursInSeconds + minutesInSeconds
         
@@ -46,8 +51,10 @@ struct ContentView: View {
                     )
                         .font(.title.bold())
                 }
+                .ignoresSafeArea(.keyboard)
                 .frame(maxWidth:.infinity, alignment: .center)
             }
+            .ignoresSafeArea(.keyboard)
             Text ("How long between reminders?")
                 .foregroundColor(.black)
                 .font(.system(size: 40))
@@ -66,16 +73,20 @@ struct ContentView: View {
                         type: "time",
                         timeInterval: Double(timeInSeconds),
                         title: "Take a break!",
-                        body: "This is your reminder to do something else.")
+                        body: "This is your reminder to step away from \(reminderText) and do something else.")
                     if timeInSeconds < 3599 {
                         timeAlert = true
                     }
                     if timeInSeconds > 3599 {
-                        successAlert = true
+                        reminderTextAlert = true
+//                        successAlert = true
                     }
                     print("\(timeInSeconds) time")
                     userDefaults.set(getTimeDifference().0, forKey: "HourTime")
                     userDefaults.set(getTimeDifference().1*5, forKey: "MinTime")
+                    userDefaults.set(reminderText, forKey: "ReminderText")
+                    reminderText = ""
+                    print(userDefaults.string(forKey: "ReminderText")!)
                     print(userDefaults.string(forKey: "HourTime") ?? "0 hrs")
                     print(userDefaults.string(forKey: "MinTime") ?? "0 mins")
                     
@@ -84,29 +95,45 @@ struct ContentView: View {
                 }, message: {
                     Text("Your reminders must be at least 60 minutes apart.")
                 })
-                .alert("Reminder set!", isPresented: $successAlert, actions: {
-                    
+                .alert("What is your reminder for?", isPresented: $reminderTextAlert, actions: {
+                    TextField(
+                    "Remind me to...",
+                    text: $reminderText
+                    )
+                    .autocapitalization(.none)
+                    .ignoresSafeArea(.keyboard)
+                    Button("Ok", action: {
+                        UserDefaults.standard.set(reminderText, forKey: "ReminderText")
+                    }
+                    )
                 }, message: {
-                    Text("You will be reminder to take a break every \(getTimeDifference().0) hrs, \(getTimeDifference().1 * 5) min. Don't forget to stop reminders when you're done needing them.")
+                    Text("You will be reminded to take a break every \(getTimeDifference().0) hrs, \(getTimeDifference().1 * 5) min. Don't forget to stop reminders when you're done needing them.")
                 })
+                .ignoresSafeArea(.keyboard)
 //                .font(.system(size: 25))
                 .padding (.trailing, 35)
+                
                 Button("Stop all reminders"){
                     notify.cancelNotifications()
                     cancelAlert = true
                     userDefaults.set("0", forKey: "HourTime")
                     userDefaults.set("0", forKey: "MinTime")
+                    userDefaults.set("", forKey: "ReminderText")
+                    reminderText = ""
                     print(userDefaults.string(forKey: "HourTime") ?? "0 hrs")
                     print(userDefaults.string(forKey: "MinTime") ?? "0 mins")
 //                    timer.upstream.connect().cancel()
                 }
+                .ignoresSafeArea(.keyboard)
                 .alert("Reminders stopped!", isPresented: $cancelAlert, actions: {
                 }, message: {
-                    Text("You will no longer receieve reminders until you start new ones.")
+                    Text("You will no longer receive reminders until you start new ones.")
                 })
+                .ignoresSafeArea(.keyboard)
                 .foregroundColor(.red)
                 .padding (.leading, 35)
             }
+            .ignoresSafeArea(.keyboard)
             .font(.system(size: 25))
             .minimumScaleFactor(0.4)
             .padding(.top, 45)
@@ -114,16 +141,22 @@ struct ContentView: View {
             Spacer()
 
             VStack{
-                Text("Previous reminders every:")
+                Text("Reminders for \(userDefaults.string(forKey: "ReminderText") ?? ""):")
+                    .ignoresSafeArea(.keyboard)
                     .font(.system(size: 22))
-                    .minimumScaleFactor(0.4)
+                    .minimumScaleFactor(0.2)
                     .bold()
                     .padding(.bottom, 3)
-                Text("\(printHours) hrs, \(printMin) mins")
+                    .multilineTextAlignment(.center)
+                Text("Every \(printHours) hrs, \(printMin) mins")
+                    .ignoresSafeArea(.keyboard)
                     .font(.system(size: 20))
+                    .multilineTextAlignment(.center)
 //                Text("\(printMin as! Date, style: .time)")
             }
+            .ignoresSafeArea(.keyboard)
         }
+        .ignoresSafeArea(.keyboard)
         .padding()
         .frame(maxHeight: .infinity, alignment: .top)
     }
