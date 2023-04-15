@@ -68,12 +68,6 @@ struct ContentView: View {
             Spacer()
             HStack{
                 Button("Start new reminders"){
-                    notify.sendNotification(
-                        date: Date(),
-                        type: "time",
-                        timeInterval: Double(timeInSeconds),
-                        title: "Take a break!",
-                        body: "This is your reminder to step away from \(reminderText) and do something else.")
                     if timeInSeconds < 3599 {
                         timeAlert = true
                     }
@@ -104,6 +98,12 @@ struct ContentView: View {
                     .ignoresSafeArea(.keyboard)
                     Button("Ok", action: {
                         UserDefaults.standard.set(reminderText, forKey: "ReminderText")
+                        notify.sendNotification(
+                            date: Date(),
+                            type: "time",
+                            timeInterval: Double(timeInSeconds),
+                            title: "Take a break!",
+                            body: "This is your reminder to step away from \(userDefaults.string(forKey: "ReminderText") ?? "") and do something else.")
                     }
                     )
                 }, message: {
